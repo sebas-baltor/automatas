@@ -5,7 +5,7 @@ namespace automatas
 {
     public partial class Home : Form
     {
-        public string[] alphabet;
+        public char[] alphabet;
         public string initialState, lastState;
         public Hashtable transitionsTable = new Hashtable();
         //public string[,] transitionsTable;
@@ -33,7 +33,8 @@ namespace automatas
                     List<string> content = File.ReadAllLines(filePath).ToList();
                     char[] limits = { ' ', ',' };
                     string[] domain = content[0].Split(limits, StringSplitOptions.RemoveEmptyEntries);
-                    alphabet = content[1].Split(limits, StringSplitOptions.RemoveEmptyEntries);
+                    //alphabet = content[1].Split(limits, StringSplitOptions.RemoveEmptyEntries);
+                    alphabet = content[1].ToCharArray().Where(c => c != ',' && c != ' ').ToArray();
                     initialState = content[2];
                     lastState = content[3];
                     int i = 0;
@@ -62,6 +63,18 @@ namespace automatas
                 return;
             }
             
+            for (int i = 0; i < text.Length; i++)
+            {
+                int index = Array.IndexOf(alphabet, text[i]);
+                string[] transition = (string[])transitionsTable[text[i]];
+                string state = transition[index];
+            }
+            //foreach (char letter in text)
+            //{
+            //    int index = Array.IndexOf(alphabet, letter);
+            //    string[] transition = (string[])transitionsTable[initialState];
+            //    string state = transition[index];
+            //}
         }
     }
 }
