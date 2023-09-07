@@ -58,23 +58,65 @@ namespace automatas
         private void ValidateBtn_Click(object sender, EventArgs e)
         {
             string text = input.Text;
-            if (text == "") {
+            if (SelectedFileName.Text == "Ningun archivo seleccionado")
+            {
+                MessageBox.Show("primero selecciona un archivo", "Aviso");
+                return;
+            }
+            if (text == "")
+            {
                 MessageBox.Show("tu cadena no puede esta vacia", "Aviso");
                 return;
             }
-            
-            for (int i = 0; i < text.Length; i++)
+            try
             {
-                int index = Array.IndexOf(alphabet, text[i]);
-                string[] transition = (string[])transitionsTable[text[i]];
-                string state = transition[index];
+                bool isOk = ValidateString(initialState, text[0], 0, text, lastState);
+
+                if (isOk)
+                {
+                    MessageBox.Show("cadena correcta", "Aviso");
+                }
+                else
+                {
+                    MessageBox.Show("cadena incorrecta", "Aviso");
+                }
             }
-            //foreach (char letter in text)
-            //{
-            //    int index = Array.IndexOf(alphabet, letter);
-            //    string[] transition = (string[])transitionsTable[initialState];
-            //    string state = transition[index];
-            //}
+            catch (Exception err){
+                    MessageBox.Show($"{err.Message}", "Aviso");
+            }
+
+        }
+
+        public bool ValidateString(string state, char letter, int textIndex, string text, string lastState)
+        {
+
+            int index = Array.IndexOf(alphabet, letter);
+            if (index == -1) {
+                throw new Exception($"en tu alfabeto no has definido {letter} por lo tanto la cadena es incorrecta");
+            }
+            //char letter = text[i];
+            string[] transition = (string[])transitionsTable[state];
+            if (transition != null)
+            {
+                state = transition[index];
+            }
+            if (transition == null && state == lastState && textIndex == text.Length)
+            {
+                return true;
+            }
+            else
+            {
+                if (textIndex + 1 < text.Length)
+                {
+                    textIndex++;
+                    ValidateString(state, text[textIndex], textIndex, text, lastState);
+                }
+                if (state == lastState)
+                {
+                    return true;
+                }
+                return false;
+            }
         }
     }
 }
